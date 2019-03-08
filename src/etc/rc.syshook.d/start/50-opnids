@@ -1,0 +1,36 @@
+#!/bin/sh
+
+PREFIX="[OPNids] ==>"
+
+echo "${PREFIX} checking theme defaults..."
+/usr/local/opnsense/scripts/OPNids/init.php
+
+echo "${PREFIX} overwriting core files..."
+cd /usr/local/opnsense/scripts/OPNids
+yarn setup
+
+echo "${PREFIX} remove other themes and resositories..."
+rm -rf /usr/local/opnsense/www/themes/opnsense
+rm -rf /usr/local/opnsense/mvc/app/controllers/OPNsense/Core/Api/repositories/opnsense.xml
+
+echo "${PREFIX} in-file replacements being processed..."
+sed -i '' 's/loader_brand="opnsense"/loader_brand="opnids"/g' /usr/local/etc/rc.loader.d/20-brand
+sed -i '' 's/crash.opnsense.org/crash.opnids.org/g' /usr/local/www/crash_reporter.php
+sed -i '' 's/firewall/sensor/g' /usr/local/opnsense/mvc/app/views/OPNsense/Core/firmware.volt
+sed -i '' 's/firewall/sensor/g' /usr/local/opnsense/scripts/shell/defaults.php
+sed -i '' 's/\/C=NL\/ST=Zuid-Holland\/L=Middelharnis\/O=OPNsense/\/C=US\/ST=Virginia\/L=Crozet\/O=OPNids/g' /usr/local/etc/inc/plugins.inc.d/webgui.inc
+
+echo "${PREFIX} removing additional menu items..."
+rm -rf /usr/local/opnsense/mvc/app/models/OPNsense/Monit/Menu
+rm -rf /usr/local/opnsense/mvc/app/models/OPNsense/Dnsmasq/Menu
+rm -rf /usr/local/opnsense/mvc/app/models/OPNsense/CaptivePortal/Menu
+rm -rf /usr/local/opnsense/mvc/app/models/OPNsense/Ntpd/Menu
+rm -rf /usr/local/opnsense/mvc/app/models/OPNsense/Cron/Menu
+rm -rf /usr/local/opnsense/mvc/app/models/OPNsense/TrafficShaper/Menu
+rm -rf /usr/local/opnsense/mvc/app/models/OPNsense/IDS/Menu
+rm -rf /usr/local/opnsense/mvc/app/models/OPNsense/Proxy/Menu
+rm -rf /usr/local/opnsense/mvc/app/models/OPNsense/Diagnostics/Menu
+rm -rf /usr/local/opnsense/mvc/app/models/OPNsense/DynamicDNS/Menu
+rm -rf /usr/local/opnsense/mvc/app/models/OPNsense/Unbound/Menu
+
+echo "${PREFIX} ready"
